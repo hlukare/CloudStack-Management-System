@@ -1,0 +1,40 @@
+# Dependencies
+node_modules/
+package-lock.json
+
+# Environment variables (security critical)
+.env
+.env.local
+.env.*.local
+*.env
+
+# Cloud provider credentials (security critical)
+*.pem
+*.key
+*.p12
+*.pfx
+gcp-key.json
+aws-credentials.json
+azure-credentials.json
+
+# Logs
+logs/
+*.log
+
+# Build outputs
+dist/
+build/
+out/
+
+# IDE and OS files
+.DS_Store
+.vscode/
+.idea/
+Thumbs.db
+*.swp
+*.swo
+
+# Temporary files
+tmp/
+temp/
+*.tmp
