@@ -23,7 +23,7 @@ A cloud infrastructure management platform for monitoring and managing virtual m
 Clone the repository and install dependencies:
 
 ```bash
-git clone <your-repo-url>
+git clone [Link](https://github.com/hlukare/CloudStack-Management-System.git)
 cd Folder_Name
 
 # Backend
