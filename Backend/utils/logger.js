@@ -1,5 +1,6 @@
 const winston = require('winston');
 const path = require('path');
+const fs = require('fs');
 
 const logFormat = winston.format.combine(
   winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
@@ -8,15 +9,22 @@ const logFormat = winston.format.combine(
   winston.format.json()
 );
 
-// Determine log directory based on environment
-const logDir = process.env.NODE_ENV === 'production' 
-  ? '/tmp' 
-  : path.join(__dirname, '../logs');
-
 const transports = [];
 
-// Only use file transports in development or if writable filesystem available
-if (process.env.NODE_ENV === 'development') {
+// Check if we can write to filesystem (not in serverless)
+const canWriteToFS = (() => {
+  try {
+    const testDir = path.join(__dirname, '../logs');
+    fs.mkdirSync(testDir, { recursive: true });
+    return true;
+  } catch (err) {
+    return false;
+  }
+})();
+
+// Only use file transports if filesystem is writable
+if (canWriteToFS) {
+  const logDir = path.join(__dirname, '../logs');
   transports.push(
     new winston.transports.File({ 
       filename: path.join(logDir, 'error.log'), 
