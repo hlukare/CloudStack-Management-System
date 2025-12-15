@@ -4,6 +4,9 @@ import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
 import { Shield, Github } from 'lucide-react';
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const AUTH_BASE_URL = API_BASE_URL.replace('/api', '');
+
 export default function Login() {
   const [isLogin, setIsLogin] = useState(true);
   const [formData, setFormData] = useState({
@@ -44,11 +47,11 @@ export default function Login() {
   };
 
   const handleGoogleLogin = () => {
-    window.location.href = 'http://localhost:5000/auth/google';
+    window.location.href = `${AUTH_BASE_URL}/auth/google`;
   };
 
   const handleGithubLogin = () => {
-    window.location.href = 'http://localhost:5000/auth/github';
+    window.location.href = `${AUTH_BASE_URL}/auth/github`;
   };
 
   return (
