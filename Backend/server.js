@@ -29,10 +29,27 @@ const PORT = process.env.PORT || 5000;
 
 // Security middleware
 app.use(helmet());
+
+// CORS configuration - allow multiple frontend URLs
+const allowedOrigins = process.env.NODE_ENV === 'development'
+  ? ['http://localhost:3000', 'http://localhost:5173']
+  : [
+      process.env.FRONTEND_URL,
+      'https://clound-vm.vercel.app',
+      'https://cloud-vm-two.vercel.app'
+    ].filter(Boolean);
+
 app.use(cors({
-  origin: process.env.NODE_ENV === 'development' 
-    ? ['http://localhost:3000', 'http://localhost:5173'] 
-    : [process.env.FRONTEND_URL || 'https://your-frontend.vercel.app'],
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true
 }));
 
