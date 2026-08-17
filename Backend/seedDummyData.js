@@ -1,6 +1,5 @@
 require('dotenv').config();
 const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs');
 
 // Import models
 const User = require('./models/User');
@@ -9,19 +8,6 @@ const Snapshot = require('./models/Snapshot');
 const Alert = require('./models/Alert');
 const CostRecord = require('./models/CostRecord');
 const AutomationRule = require('./models/AutomationRule');
-
-// Connect to MongoDB
-mongoose.connect(process.env.MONGODB_URI, {
-  dbName: process.env.DB_NAME,
-})
-.then(() => {
-  console.log('✅ Connected to MongoDB');
-  seedData();
-})
-.catch(err => {
-  console.error('❌ MongoDB connection error:', err);
-  process.exit(1);
-});
 
 async function seedData() {
   try {
@@ -1455,20 +1441,50 @@ async function seedData() {
     await AutomationRule.insertMany(automationRules);
     console.log(`✅ Created ${automationRules.length} automation rules`);
 
+    const summary = {
+      demoUser: demoUser.email,
+      password: 'demo123',
+      vms: createdVMs.length,
+      snapshots: snapshots.length,
+      alerts: alerts.length,
+      costRecords: costRecords.length,
+      automationRules: automationRules.length,
+    };
+
     console.log('\n🎉 Dummy data seeded successfully!');
     console.log('\n📊 Summary:');
-    console.log(`   - Demo User: ${demoUser.email}`);
-    console.log(`   - Password: demo123`);
-    console.log(`   - VMs: ${createdVMs.length} (7 AWS, 4 Azure, 5 GCP)`);
-    console.log(`   - Snapshots: ${snapshots.length}`);
-    console.log(`   - Alerts: ${alerts.length}`);
-    console.log(`   - Cost Records: ${costRecords.length}`);
-    console.log(`   - Automation Rules: ${automationRules.length}`);
+    console.log(`   - Demo User: ${summary.demoUser}`);
+    console.log(`   - Password: ${summary.password}`);
+    console.log(`   - VMs: ${summary.vms} (7 AWS, 4 Azure, 5 GCP)`);
+    console.log(`   - Snapshots: ${summary.snapshots}`);
+    console.log(`   - Alerts: ${summary.alerts}`);
+    console.log(`   - Cost Records: ${summary.costRecords}`);
+    console.log(`   - Automation Rules: ${summary.automationRules}`);
     console.log('\n✅ You can now login with demo@cloudstack.com / demo123');
 
-    process.exit(0);
+    return summary;
   } catch (error) {
     console.error('❌ Error seeding data:', error);
+    throw error;
+  }
+}
+
+async function runCli() {
+  try {
+    await mongoose.connect(process.env.MONGODB_URI, {
+      dbName: process.env.DB_NAME,
+    });
+    console.log('✅ Connected to MongoDB');
+    await seedData();
+    process.exit(0);
+  } catch (err) {
+    console.error('❌ MongoDB / seed error:', err);
     process.exit(1);
   }
+}
+
+module.exports = { seedData };
+
+if (require.main === module) {
+  runCli();
 }

@@ -20,6 +20,7 @@ const alertRoutes = require('./routes/alert');
 const analyticsRoutes = require('./routes/analytics');
 const automationRoutes = require('./routes/automation');
 const oauthRoutes = require('./routes/oauth');
+const seedRoutes = require('./routes/seed');
 
 // Import scheduled tasks
 const { initScheduledTasks } = require('./services/scheduler');
@@ -118,6 +119,7 @@ app.use('/api/alerts', alertRoutes);
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/automation', automationRoutes);
 app.use('/auth', oauthRoutes);
+app.use('/api/seed', seedRoutes);
 
 // 404 handler
 app.use((req, res) => {
